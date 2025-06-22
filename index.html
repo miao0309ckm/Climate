@@ -37,7 +37,7 @@
             max-height: 40vh; /* Set a max-height for mobile */
             overflow-y: auto;
         }
-        /* FIX: Draggable header for the legend */
+        /* Draggable header for the legend */
         .legend-header {
             padding: 6px 12px;
             font-weight: bold;
@@ -81,16 +81,19 @@
             color: #ffffff;
         }
         /* Style for the analysis box */
-        #climate-analysis, #quiz-answer-info {
+        #climate-analysis, #quiz-answer-info, #rules-container {
             margin-top: 1rem;
-            padding: 0.75rem;
+            border-radius: 0.375rem;
+        }
+        #climate-analysis, #quiz-answer-info {
+             padding: 0.75rem;
             background-color: #f3f4f6;
             border-left: 4px solid #3b82f6;
             font-size: 0.875rem;
             line-height: 1.5;
             color: #374151;
         }
-        #climate-analysis h5, #quiz-answer-info h5 {
+        #climate-analysis h5, #quiz-answer-info h5, #rules-container h5 {
             font-weight: bold;
             margin-bottom: 0.5rem;
             color: #1f2937;
@@ -123,6 +126,18 @@
             border-radius: 0.375rem;
             font-weight: 500;
         }
+         /* Style for latitude line labels */
+        .lat-label {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            border: none;
+            box-shadow: none;
+        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,22 +145,52 @@
 </head>
 <body class="bg-gray-100">
 
-    <!-- FIX: Responsive Flex Container -->
+    <!-- Responsive Flex Container -->
     <div class="flex flex-col lg:flex-row">
         <!-- Map container -->
-        <!-- FIX: Set explicit height for mobile, full height for desktop -->
         <div class="w-full lg:w-2/3 h-96 lg:h-screen">
             <div id="map"></div>
         </div>
 
         <!-- Information and Climograph Panel -->
-        <!-- FIX: Allow natural height and scrolling on mobile -->
         <div class="w-full lg:w-1/3 bg-white shadow-lg overflow-y-auto lg:h-screen">
             <div class="p-6">
                 <!-- Main View -->
                 <div id="main-view">
                     <h1 class="text-2xl font-bold text-gray-800 mb-2">互動式柯本氣候學習平台</h1>
                     <p class="text-gray-600 mb-4">請在地圖上點擊城市圖標，或從下方選單選擇一個城市，以查看其詳細氣候資料與氣候圖。</p>
+                    
+                    <!-- Collapsible Rules Section -->
+                    <div id="rules-container" class="bg-white border rounded-md mb-4">
+                        <button id="toggle-rules-btn" class="w-full text-left p-3 font-bold flex justify-between items-center hover:bg-gray-50 rounded-t-md">
+                            <span>柯本氣候分類判斷法則</span>
+                            <span id="rules-arrow">▼</span>
+                        </button>
+                        <div id="rules-content" class="hidden p-4 border-t text-sm bg-gray-50 rounded-b-md">
+                            <h4 class="font-bold text-base mb-2">第一步：用「溫度」劃定五大氣候帶</h4>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><b>A (熱帶)</b>：最冷月均溫 ≥ 18°C</li>
+                                <li><b>E (極地)</b>：最暖月均溫 ≤ 10°C</li>
+                                <li><b>C (溫帶)</b>：最冷月均溫 > -3°C 且 < 18°C</li>
+                                <li><b>D (寒帶)</b>：最冷月均溫 ≤ -3°C 且最暖月 > 10°C</li>
+                                <li><b>B (乾燥)</b>：年降水量低於乾燥指數 (依據年均溫與降水季節計算)</li>
+                            </ul>
+                            <h4 class="font-bold text-base mt-4 mb-2">第二步：用「降水季節」細分亞型 (A, C, D)</h4>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><b>f (濕潤)</b>：全年濕潤，無明顯乾季</li>
+                                <li><b>w (冬乾)</b>：冬季為乾季</li>
+                                <li><b>s (夏乾)</b>：夏季為乾季 (地中海型氣候)</li>
+                                <li><b>m (季風)</b>：熱帶季風氣候 (介於Af與Aw之間)</li>
+                            </ul>
+                            <h4 class="font-bold text-base mt-4 mb-2">第三步：用「溫度程度」做最後修飾 (C, D)</h4>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><b>a (炎夏)</b>：最暖月均溫 ≥ 22°C</li>
+                                <li><b>b (暖夏)</b>：最暖月均溫 < 22°C</li>
+                                <li><b>c (涼夏)</b>：最暖月 > 10°C 的月份 < 4個</li>
+                                <li><b>d (嚴冬)</b>：最冷月均溫 < -38°C (僅適用D型)</li>
+                            </ul>
+                        </div>
+                    </div>
                     
                     <!-- Mobile-only Legend Container -->
                     <div id="mobile-legend-container" class="lg:hidden mb-4"></div>
@@ -416,7 +461,7 @@
         }
 
         function getLegendHTML() {
-            let html = `<div class="legend-header">圖例 (可拖曳)</div><div class="legend-content">`;
+            let html = `<div class="legend-header">圖例</div><div class="legend-content">`;
             const climateGroups = {
                 'A: 熱帶': ['Af', 'Am', 'Aw'], 'B: 乾燥': ['BWh', 'BWk', 'BSh', 'BSk'],
                 'C: 溫帶': ['Cfa', 'Cfb', 'Csa', 'Csb', 'Cwa', 'Cwb', 'Cfc'],
@@ -568,6 +613,14 @@
         // --- INITIAL LOAD ---
         window.addEventListener('resize', setupLegend);
         setupLegend();
+        const toggleRulesBtn = document.getElementById('toggle-rules-btn');
+        const rulesContent = document.getElementById('rules-content');
+        const rulesArrow = document.getElementById('rules-arrow');
+        toggleRulesBtn.addEventListener('click', () => {
+            rulesContent.classList.toggle('hidden');
+            rulesArrow.textContent = rulesContent.classList.contains('hidden') ? '▼' : '▲';
+        });
+
         const initialCityKey = "Taipei"; // Start with Taipei
         updateInfoPanel(initialCityKey);
     </script>
