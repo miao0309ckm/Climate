@@ -28,15 +28,28 @@
         }
         /* Custom styles for Leaflet legend */
         .legend {
-            padding: 8px 12px;
+            padding: 0; /* Remove padding for header */
             font: 13px/1.5 'Noto Sans TC', Arial, Helvetica, sans-serif;
             background: rgba(255,255,255,0.85);
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
             border-radius: 8px;
-            line-height: 20px; 
             color: #333;
             max-height: 40vh; /* Set a max-height for mobile */
             overflow-y: auto;
+        }
+        /* FIX: Draggable header for the legend */
+        .legend-header {
+            padding: 6px 12px;
+            font-weight: bold;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.1);
+            cursor: move;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .legend-content {
+            padding: 8px 12px;
+            line-height: 20px;
         }
         .legend h4 {
             font-weight: bold;
@@ -134,7 +147,7 @@
                     <h1 class="text-2xl font-bold text-gray-800 mb-2">互動式柯本氣候學習平台</h1>
                     <p class="text-gray-600 mb-4">請在地圖上點擊城市圖標，或從下方選單選擇一個城市，以查看其詳細氣候資料與氣候圖。</p>
                     
-                    <!-- FIX: Mobile-only Legend Container -->
+                    <!-- Mobile-only Legend Container -->
                     <div id="mobile-legend-container" class="lg:hidden mb-4"></div>
 
                     <div class="mb-4">
@@ -375,10 +388,35 @@
             L.marker([line.lat, -150], { icon: L.divIcon({ className: 'lat-label', html: `<span>${line.label}</span>` }) }).addTo(map);
         });
 
-        // --- LEGEND ---
-        const legend = L.control({position: 'bottomright'});
-        legend.onAdd = function (map) {
-            const div = L.DomUtil.create('div', 'info legend');
+        // --- LEGEND LOGIC ---
+        let legendControl;
+        function setupLegend() {
+            const legendContainer = document.getElementById('mobile-legend-container');
+            const legendContent = getLegendHTML();
+
+            if (window.innerWidth < 1024) { // Mobile
+                if (legendControl) {
+                    map.removeControl(legendControl);
+                    legendControl = null;
+                }
+                legendContainer.innerHTML = `<div class="legend">${legendContent}</div>`;
+            } else { // Desktop
+                legendContainer.innerHTML = '';
+                if (!legendControl) {
+                    legendControl = L.control({position: 'bottomright'});
+                    legendControl.onAdd = function (map) {
+                        const div = L.DomUtil.create('div', 'legend');
+                        div.innerHTML = legendContent;
+                        makeDraggable(div);
+                        return div;
+                    };
+                    legendControl.addTo(map);
+                }
+            }
+        }
+
+        function getLegendHTML() {
+            let html = `<div class="legend-header">圖例 (可拖曳)</div><div class="legend-content">`;
             const climateGroups = {
                 'A: 熱帶': ['Af', 'Am', 'Aw'], 'B: 乾燥': ['BWh', 'BWk', 'BSh', 'BSk'],
                 'C: 溫帶': ['Cfa', 'Cfb', 'Csa', 'Csb', 'Cwa', 'Cwb', 'Cfc'],
@@ -386,15 +424,46 @@
                 'E: 極地': ['ET', 'EF']
             };
             for (const groupName in climateGroups) {
-                div.innerHTML += `<h4>${groupName}</h4>`;
+                html += `<h4>${groupName}</h4>`;
                 climateGroups[groupName].forEach(typeCode => {
                     const climateDetail = koppenColorData[typeCode];
-                    if (climateDetail) { div.innerHTML += `<i style="background:${climateDetail.color}"></i> ${typeCode}: ${climateDetail.name}<br>`; }
+                    if (climateDetail) { html += `<i style="background:${climateDetail.color}"></i> ${typeCode}: ${climateDetail.name}<br>`; }
                 });
             }
-            return div;
-        };
-        legend.addTo(map);
+            html += `</div>`;
+            return html;
+        }
+        
+        function makeDraggable(element) {
+            const header = element.querySelector('.legend-header');
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            header.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
         
         // --- QUIZ LOGIC ---
         const toggleQuizBtn = document.getElementById('toggle-quiz-btn');
@@ -497,6 +566,8 @@
         nextBtn.addEventListener('click', loadNewQuestion);
 
         // --- INITIAL LOAD ---
+        window.addEventListener('resize', setupLegend);
+        setupLegend();
         const initialCityKey = "Taipei"; // Start with Taipei
         updateInfoPanel(initialCityKey);
     </script>
