@@ -133,6 +133,10 @@
                 <div id="main-view">
                     <h1 class="text-2xl font-bold text-gray-800 mb-2">互動式柯本氣候學習平台</h1>
                     <p class="text-gray-600 mb-4">請在地圖上點擊城市圖標，或從下方選單選擇一個城市，以查看其詳細氣候資料與氣候圖。</p>
+                    
+                    <!-- FIX: Mobile-only Legend Container -->
+                    <div id="mobile-legend-container" class="lg:hidden mb-4"></div>
+
                     <div class="mb-4">
                         <label for="city-selector" class="block text-sm font-medium text-gray-700 mb-1">選擇城市:</label>
                         <select id="city-selector" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></select>
@@ -180,7 +184,7 @@
                     <button id="toggle-quiz-btn" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600">開始隨機練習</button>
                 </div>
 
-                <!-- NEW: Footer with author and version -->
+                <!-- Footer with author and version -->
                 <footer class="mt-8 pt-4 border-t text-center text-xs text-gray-500">
                     <p>製作：鄭伉妙，版本1.0 (2025/06)</p>
                 </footer>
