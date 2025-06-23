@@ -81,29 +81,22 @@
             color: #ffffff;
         }
         /* Style for the analysis box */
-        #climate-analysis, #quiz-answer-info, #rules-container {
+        .analysis-box {
             margin-top: 1rem;
             border-radius: 0.375rem;
-        }
-        #climate-analysis, #quiz-answer-info {
-             padding: 0.75rem;
+            padding: 0.75rem;
             background-color: #f3f4f6;
             border-left: 4px solid #3b82f6;
             font-size: 0.875rem;
             line-height: 1.5;
             color: #374151;
         }
-        #climate-analysis h5, #quiz-answer-info h5, #rules-container h5 {
+        .analysis-box h5 {
             font-weight: bold;
             margin-bottom: 0.5rem;
             color: #1f2937;
         }
         /* Quiz Styles */
-        #quiz-container {
-            border-top: 1px solid #e5e7eb;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-        }
         .quiz-option {
             display: block;
             margin-bottom: 0.5rem;
@@ -120,13 +113,7 @@
             background-color: #dbeafe;
             border-color: #3b82f6;
         }
-        #quiz-feedback {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-        }
-         /* Style for latitude line labels */
+        /* Style for latitude line labels */
         .lat-label {
             background: rgba(0, 0, 0, 0.5);
             color: white;
@@ -137,6 +124,37 @@
             white-space: nowrap;
             border: none;
             box-shadow: none;
+        }
+        /* Tab styles */
+        .tab-button {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid #d1d5db;
+            border-bottom: none;
+            background-color: #f9fafb;
+            color: #374151;
+            font-weight: 500;
+        }
+        .tab-button.active {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+            color: #3b82f6;
+        }
+        /* Slider Styles */
+        .slider-container {
+            display: grid;
+            grid-template-columns: 40px 1fr 50px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        /* Help button and explanation box styles */
+        .explanation-box {
+            background-color: #eef2ff;
+            border-left: 4px solid #6366f1;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 4px;
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,10 +173,18 @@
         <!-- Information and Climograph Panel -->
         <div class="w-full lg:w-1/3 bg-white shadow-lg overflow-y-auto lg:h-screen">
             <div class="p-6">
+                 <h1 class="text-2xl font-bold text-gray-800 mb-4">互動式柯本氣候學習平台</h1>
+                
+                <!-- Tab Navigation -->
+                <div class="flex border-b border-gray-300 mb-4">
+                    <button id="tab-main" class="tab-button active rounded-t-lg">城市瀏覽</button>
+                    <button id="tab-sandbox" class="tab-button rounded-t-lg">氣候沙盒</button>
+                    <button id="tab-quiz" class="tab-button rounded-t-lg">隨機練習</button>
+                </div>
+                
                 <!-- Main View -->
                 <div id="main-view">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">互動式柯本氣候學習平台</h1>
-                    <p class="text-gray-600 mb-4">請在地圖上點擊城市圖標，或從下方選單選擇一個城市，以查看其詳細氣候資料與氣候圖。</p>
+                    <p class="text-gray-600 mb-4">請在地圖上點擊圖標，或從下方選單選擇城市，以查看其氣候資料。</p>
                     
                     <!-- Collapsible Rules Section -->
                     <div id="rules-container" class="bg-white border rounded-md mb-4">
@@ -167,28 +193,7 @@
                             <span id="rules-arrow">▼</span>
                         </button>
                         <div id="rules-content" class="hidden p-4 border-t text-sm bg-gray-50 rounded-b-md">
-                            <h4 class="font-bold text-base mb-2">第一步：用「溫度」劃定五大氣候帶</h4>
-                            <ul class="list-disc list-inside space-y-1">
-                                <li><b>A (熱帶)</b>：最冷月均溫 ≥ 18°C</li>
-                                <li><b>E (極地)</b>：最暖月均溫 ≤ 10°C</li>
-                                <li><b>C (溫帶)</b>：最冷月均溫 > -3°C 且 < 18°C</li>
-                                <li><b>D (寒帶)</b>：最冷月均溫 ≤ -3°C 且最暖月 > 10°C</li>
-                                <li><b>B (乾燥)</b>：年降水量低於乾燥指數 (依據年均溫與降水季節計算)</li>
-                            </ul>
-                            <h4 class="font-bold text-base mt-4 mb-2">第二步：用「降水季節」細分亞型 (A, C, D)</h4>
-                            <ul class="list-disc list-inside space-y-1">
-                                <li><b>f (濕潤)</b>：全年濕潤，無明顯乾季</li>
-                                <li><b>w (冬乾)</b>：冬季為乾季</li>
-                                <li><b>s (夏乾)</b>：夏季為乾季 (地中海型氣候)</li>
-                                <li><b>m (季風)</b>：熱帶季風氣候 (介於Af與Aw之間)</li>
-                            </ul>
-                            <h4 class="font-bold text-base mt-4 mb-2">第三步：用「溫度程度」做最後修飾 (C, D)</h4>
-                            <ul class="list-disc list-inside space-y-1">
-                                <li><b>a (炎夏)</b>：最暖月均溫 ≥ 22°C</li>
-                                <li><b>b (暖夏)</b>：最暖月均溫 < 22°C</li>
-                                <li><b>c (涼夏)</b>：最暖月 > 10°C 的月份 < 4個</li>
-                                <li><b>d (嚴冬)</b>：最冷月均溫 < -38°C (僅適用D型)</li>
-                            </ul>
+                           <!-- Rules content will be populated by JS -->
                         </div>
                     </div>
                     
@@ -204,7 +209,7 @@
                         <p id="climate-type" class="text-md font-semibold text-gray-700 mt-1"></p>
                         <p id="climate-description" class="text-sm text-gray-600 mt-2 h-16"></p>
                     </div>
-                    <div id="annual-stats" class="grid grid-cols-2 gap-4 mt-4 text-center">
+                    <div class="grid grid-cols-2 gap-4 mt-4 text-center">
                         <div>
                             <p class="text-sm text-gray-500">年均溫</p>
                             <p id="annual-temp" class="text-lg font-bold text-red-600"></p>
@@ -217,34 +222,79 @@
                     <div class="mt-2">
                          <canvas id="climate-chart"></canvas>
                     </div>
-                    <div id="climate-analysis"></div>
+                    <div id="climate-analysis" class="analysis-box"></div>
+                </div>
+
+                <!-- Sandbox View -->
+                <div id="sandbox-view" class="hidden">
+                     <p class="text-gray-600 mb-4">自由調整溫度與降水，探索氣候類型的變化！可載入城市範本開始。</p>
+                     <div class="mb-4">
+                        <label for="load-city-sandbox" class="block text-sm font-medium text-gray-700 mb-1">載入城市範本:</label>
+                        <select id="load-city-sandbox" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                           <option value="">-- 自訂數據 --</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 text-center text-red-600">溫度 (°C)</h3>
+                            <div id="temp-sliders" class="space-y-1"></div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 text-center text-blue-600">降水量 (mm)</h3>
+                            <div id="precip-sliders" class="space-y-1"></div>
+                        </div>
+                    </div>
+                     <div class="mt-4">
+                         <canvas id="sandbox-chart"></canvas>
+                    </div>
+                    <div id="sandbox-analysis" class="analysis-box"></div>
                 </div>
 
                 <!-- Quiz View -->
                 <div id="quiz-view" class="hidden">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">氣候判讀練習</h1>
-                    <p class="text-gray-600 mb-4">請根據下方的氣候圖，判斷其所屬的柯本氣候類型。</p>
-                    <div>
-                        <canvas id="quiz-chart"></canvas>
+                    <!-- Start screen for quiz -->
+                    <div id="quiz-start-screen">
+                        <p class="text-gray-600 mb-4">準備好挑戰您的柯本氣候分類知識了嗎？</p>
+                        <button id="start-quiz-btn" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600">開始練習</button>
                     </div>
-                    <div id="quiz-options" class="mt-4"></div>
-                    <div id="quiz-feedback"></div>
-                    <div id="quiz-answer-info" class="hidden"></div>
 
-                    <div class="mt-4 flex space-x-2">
-                        <button id="submit-answer" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">提交答案</button>
-                        <button id="next-question" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-md hover:bg-gray-600 hidden">下一題</button>
+                    <!-- Question area for quiz -->
+                    <div id="quiz-question-area" class="hidden">
+                        <p class="text-gray-600 mb-4">請根據下方的氣候圖，判斷其所屬的柯本氣候類型。</p>
+                        <div>
+                            <canvas id="quiz-chart"></canvas>
+                        </div>
+                        <div id="quiz-options" class="mt-4"></div>
+                        <div id="quiz-feedback" class="mt-4 p-3 rounded-md font-bold"></div>
+                        <div id="quiz-answer-info" class="analysis-box hidden"></div>
+                        <div class="mt-4 flex space-x-2">
+                            <button id="submit-answer" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">提交答案</button>
+                            <button id="next-question" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-md hover:bg-gray-600 hidden">下一題</button>
+                            <button id="end-quiz-btn" class="w-1/3 bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600">結束練習</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Summary screen for quiz -->
+                    <div id="quiz-summary-screen" class="hidden">
+                        <h2 class="text-xl font-bold text-gray-800 mb-3">練習成果總結</h2>
+                        <div id="quiz-summary-stats" class="grid grid-cols-3 gap-2 text-center mb-4 p-3 bg-blue-50 rounded-lg"></div>
+                        <div id="quiz-summary-comment" class="analysis-box mb-4"></div>
+                        <div id="quiz-summary-details">
+                            <h3 class="font-bold mb-2">錯誤題目回顧</h3>
+                            <div id="quiz-wrong-answers" class="space-y-2 text-sm"></div>
+                        </div>
+                        <div class="mt-6 flex space-x-2">
+                             <button id="restart-quiz-btn" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600">再試一次</button>
+                             <button id="back-to-main-btn" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-md hover:bg-gray-600">返回瀏覽</button>
+                        </div>
                     </div>
                 </div>
 
-                 <!-- Quiz Start/End Button Container -->
-                <div id="quiz-container" class="mt-6 border-t pt-6">
-                    <button id="toggle-quiz-btn" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600">開始隨機練習</button>
-                </div>
 
                 <!-- Footer with author and version -->
                 <footer class="mt-8 pt-4 border-t text-center text-xs text-gray-500">
-                    <p>製作：鄭伉妙，版本1.0 (2025/06)</p>
+                    <p>製作：鄭伉妙，版本2.3 (2025/06)</p>
                 </footer>
 
             </div>
@@ -252,39 +302,47 @@
     </div>
 
     <script>
-        // --- DATA ---
+        // --- DATA (Curated Representative Cities) ---
         const cityData = {
-            // Taiwan Cities
-            "Taipei": { name: "臺北 (臺灣)", lat: 25.0330, lon: 121.5654, type: "Cfa", temps: [16.6, 17.0, 18.9, 22.3, 25.6, 28.1, 29.5, 29.2, 27.4, 24.5, 21.8, 18.2], precip: [86, 143, 169, 148, 209, 292, 226, 269, 311, 145, 87, 80] },
-            "Taichung": { name: "臺中 (臺灣)", lat: 24.1477, lon: 120.6736, type: "Cwa", temps: [16.8, 17.6, 19.9, 23.4, 26.3, 27.9, 28.6, 28.2, 27.5, 25.2, 22.1, 18.5], precip: [27, 49, 62, 91, 211, 370, 297, 303, 169, 17, 16, 20] },
-            "Kaohsiung": { name: "高雄 (臺灣)", lat: 22.6273, lon: 120.3014, type: "Aw", temps: [20.2, 21.0, 23.3, 26.0, 28.1, 28.9, 29.2, 28.7, 28.2, 26.9, 24.5, 21.5], precip: [12, 18, 30, 52, 155, 395, 381, 399, 224, 43, 19, 12] },
-            "Hualien": { name: "花蓮 (臺灣)", lat: 23.9781, lon: 121.6054, type: "Cfa", temps: [18.3, 18.8, 20.6, 23.2, 25.7, 27.7, 29.0, 28.6, 27.1, 24.9, 22.4, 19.7], precip: [59, 81, 84, 98, 184, 214, 250, 314, 350, 222, 121, 68] },
-            "Yushan": { name: "玉山 (臺灣)", lat: 23.47, lon: 120.96, type: "ET", temps: [-0.5, 0.1, 2.1, 4.2, 6.2, 7.5, 8.2, 8.1, 7.5, 5.8, 3.5, 1.1], precip: [85, 120, 150, 260, 410, 630, 600, 550, 420, 150, 70, 65] },
-            // A climates
-            "Singapore": { name: "新加坡", lat: 1.3521, lon: 103.8198, type: "Af", temps: [26.5, 26.9, 27.2, 27.5, 27.5, 27.4, 27.1, 27.0, 27.0, 27.1, 26.8, 26.5], precip: [243, 163, 193, 184, 178, 175, 169, 197, 178, 208, 252, 289] },
-            "Toamasina": { name: "圖阿馬西納 (馬達加斯加)", lat: -18.15, lon: 49.42, type: "Af", temps: [26.5, 26.6, 26.1, 25.2, 23.6, 22.0, 21.4, 21.6, 22.4, 23.7, 25.1, 26.2], precip: [410, 400, 451, 301, 230, 246, 276, 191, 131, 100, 131, 261] },
-            "Cairns": { name: "凱恩斯 (澳)", lat: -16.92, lon: 145.77, type: "Am", temps: [27.6, 27.5, 26.9, 25.7, 24.0, 22.4, 21.8, 22.6, 23.9, 25.5, 26.8, 27.6], precip: [404, 452, 423, 196, 88, 48, 29, 35, 37, 48, 93, 180] },
-            "Darwin": { name: "達爾文 (澳)", lat: -12.46, lon: 130.84, type: "Aw", temps: [28.3, 28.1, 28.5, 29.3, 28.5, 26.6, 26.0, 26.9, 28.8, 29.8, 29.8, 29.1], precip: [426, 372, 316, 101, 21, 2, 1, 5, 16, 57, 141, 252] },
-            // B climates
-            "Cairo": { name: "開羅 (埃)", lat: 30.0444, lon: 31.2357, type: "BWh", temps: [13.9, 15.0, 17.8, 22.0, 25.8, 28.1, 28.7, 28.5, 26.4, 23.9, 19.4, 15.3], precip: [5, 3, 2, 1, 0, 0, 0, 0, 0, 1, 3, 5] },
-            "AliceSprings": { name: "愛麗斯泉 (澳)", lat: -23.70, lon: 133.88, type: "BWh", temps: [28.8, 27.9, 25.0, 20.3, 15.6, 12.4, 12.2, 14.8, 19.3, 23.9, 26.5, 28.2], precip: [40, 44, 32, 16, 19, 14, 21, 9, 9, 22, 29, 38] },
-            "Toliara": { name: "圖利亞拉 (馬達加斯加)", lat: -23.35, lon: 43.67, type: "BSh", temps: [27.5, 27.5, 26.7, 24.7, 22.2, 20.1, 19.8, 20.8, 22.7, 24.9, 26.3, 27.2], precip: [93, 86, 36, 11, 16, 17, 7, 5, 8, 9, 20, 97] },
-            "Turpan": { name: "吐魯番 (中)", lat: 42.91, lon: 89.19, type: "BWk", temps: [-7.6, -1.9, 8.7, 19.8, 26.5, 31.4, 33.0, 31.3, 25.0, 14.9, 3.8, -5.3], precip: [1, 1, 2, 3, 5, 8, 10, 8, 4, 2, 1, 1] },
-            "Ndjamena": { name: "恩賈梅納 (查)", lat: 12.13, lon: 15.05, type: "BSh", temps: [23.3, 26.2, 30.3, 33.5, 32.9, 30.9, 28.3, 27.0, 27.9, 29.8, 27.1, 24.2], precip: [0, 0, 0, 10, 26, 60, 150, 255, 95, 20, 1, 0] },
-            "ElPaso": { name: "巴索 (美)", lat: 31.7619, lon: -106.4850, type: "BSk", temps: [7.8, 10.8, 14.7, 19.2, 23.9, 28.3, 28.1, 26.9, 23.9, 18.3, 11.9, 7.9], precip: [11, 8, 5, 5, 5, 20, 41, 44, 34, 17, 8, 12] },
-            // C climates
-            "Perth": { name: "伯斯 (澳)", lat: -31.95, lon: 115.86, type: "Csa", temps: [24.5, 24.8, 22.9, 19.4, 16.0, 13.6, 12.8, 13.3, 15.0, 17.2, 20.1, 22.7], precip: [10, 12, 19, 36, 88, 125, 145, 126, 88, 40, 22, 11] },
-            "SanFrancisco": { name: "舊金山 (美)", lat: 37.77, lon: -122.41, type: "Csb", temps: [10.6, 12.2, 13.1, 14.1, 15.1, 16.4, 16.9, 17.3, 17.6, 16.6, 13.6, 10.9], precip: [114, 113, 83, 37, 18, 4, 0, 1, 4, 29, 80, 116] },
-            "Kunming": { name: "昆明 (中)", lat: 25.04, lon: 102.71, type: "Cwb", temps: [9.2, 11.2, 14.6, 17.7, 19.7, 20.3, 19.8, 19.3, 17.5, 15.0, 11.6, 8.8], precip: [12, 16, 20, 25, 90, 180, 205, 200, 120, 80, 40, 12] },
-            "Sydney": { name: "雪梨 (澳)", lat: -33.86, lon: 151.20, type: "Cfa", temps: [23.0, 23.0, 21.7, 18.9, 15.7, 13.1, 12.2, 13.3, 15.6, 18.2, 20.0, 21.9], precip: [102, 119, 129, 126, 121, 132, 97, 81, 69, 77, 84, 78] },
-            "Melbourne": { name: "墨爾本 (澳)", lat: -37.8136, lon: 144.9631, type: "Cfb", temps: [20.3, 20.2, 18.5, 15.6, 12.9, 10.8, 10.1, 11.2, 12.9, 14.8, 16.8, 18.7], precip: [47, 47, 51, 57, 56, 49, 48, 50, 58, 66, 60, 59] },
-            "Reykjavik": { name: "雷克雅維克 (冰)", lat: 64.14, lon: -21.94, type: "Cfc", temps: [-0.5, 0.4, 0.5, 2.9, 6.3, 9.0, 10.6, 10.3, 7.4, 4.4, 1.1, -0.2], precip: [76, 72, 71, 58, 44, 50, 52, 67, 86, 86, 73, 94] },
-            "Chicago": { name: "芝加哥 (美)", lat: 41.87, lon: -87.62, type: "Dfa", temps: [-3.8, -1.8, 3.8, 9.8, 15.7, 21.2, 23.8, 22.9, 18.6, 11.7, 4.8, -2.1], precip: [52, 47, 63, 86, 96, 94, 94, 107, 82, 80, 80, 57] },
-            "Moscow": { name: "莫斯科 (俄)", lat: 55.7558, lon: 37.6173, type: "Dfb", temps: [-9.3, -8.3, -2.8, 5.8, 13.1, 16.9, 18.7, 16.9, 11.2, 5.1, -1.2, -6.1], precip: [42, 36, 34, 38, 52, 75, 88, 77, 60, 60, 52, 46] },
-            "Anchorage": { name: "安克拉治 (美)", lat: 61.21, lon: -149.90, type: "Dfc", temps: [-8.3, -6.6, -2.7, 3.3, 9.3, 13.4, 15.3, 14.1, 9.4, 2.1, -4.8, -7.2], precip: [20, 19, 16, 12, 18, 29, 46, 62, 76, 54, 30, 29] },
-            "Yakutsk": { name: "雅庫次克 (俄)", lat: 62.0355, lon: 129.6754, type: "Dwd", temps: [-38.6, -33.8, -20.1, -4.8, 7.5, 16.4, 19.5, 15.2, 5.9, -7.8, -27.3, -37.7], precip: [9, 8, 6, 9, 20, 35, 39, 37, 31, 21, 16, 10] },
-            "Godthaab": { name: "努克 (格陵蘭)", lat: 64.1836, lon: -51.7216, type: "ET", temps: [-8.0, -8.5, -8.1, -2.8, 2.5, 6.1, 8.5, 8.0, 4.9, 0.3, -3.1, -6.2], precip: [40, 42, 49, 49, 55, 62, 82, 89, 81, 62, 60, 48] },
-            "VostokStation": { name: "東方站 (南極)", lat: -78.46, lon: 106.86, type: "EF", temps: [-32.1, -44.3, -57.9, -64.7, -65.6, -65.2, -66.9, -67.6, -66.0, -57.1, -43.1, -32.1], precip: [1, 1, 2, 2, 3, 2, 2, 2, 2, 2, 1, 1] }
+            // --- TAIWAN ---
+            "Taipei": { name: "臺北 (臺灣)", lat: 25.03, lon: 121.56, temps: [16.6, 17.0, 18.9, 22.3, 25.6, 28.1, 29.5, 29.2, 27.4, 24.5, 21.8, 18.2], precip: [86, 143, 169, 148, 209, 292, 226, 269, 311, 145, 87, 80] },
+            "Taichung": { name: "臺中 (臺灣)", lat: 24.14, lon: 120.67, temps: [16.8, 17.6, 19.9, 23.4, 26.3, 27.9, 28.6, 28.2, 27.5, 25.2, 22.1, 18.5], precip: [27, 49, 62, 91, 211, 370, 297, 303, 169, 17, 16, 20] },
+            "Kaohsiung": { name: "高雄 (臺灣)", lat: 22.62, lon: 120.30, temps: [20.2, 21.0, 23.3, 26.0, 28.1, 28.9, 29.2, 28.7, 28.2, 26.9, 24.5, 21.5], precip: [12, 18, 30, 52, 155, 395, 381, 399, 224, 43, 19, 12] },
+            "Hualien": { name: "花蓮 (臺灣)", lat: 23.97, lon: 121.60, temps: [18.3, 18.8, 20.6, 23.2, 25.7, 27.7, 29.0, 28.6, 27.1, 24.9, 22.4, 19.7], precip: [59, 81, 84, 98, 184, 214, 250, 314, 350, 222, 121, 68] },
+            "Yushan": { name: "玉山 (臺灣)", lat: 23.47, lon: 120.96, temps: [-0.5, 0.1, 2.1, 4.2, 6.2, 7.5, 8.2, 8.1, 7.5, 5.8, 3.5, 1.1], precip: [85, 120, 150, 260, 410, 630, 600, 550, 420, 150, 70, 65] },
+
+            // --- A: TROPICAL ---
+            "Singapore": { name: "新加坡", lat: 1.35, lon: 103.81, temps: [26.5, 26.9, 27.2, 27.5, 27.5, 27.4, 27.1, 27.0, 27.0, 27.1, 26.8, 26.5], precip: [243, 163, 193, 184, 178, 175, 169, 197, 178, 208, 252, 289] },
+            "Cairns": { name: "凱恩斯 (澳)", lat: -16.92, lon: 145.77, temps: [27.6, 27.5, 26.9, 25.7, 24.0, 22.4, 21.8, 22.6, 23.9, 25.5, 26.8, 27.6], precip: [404, 452, 423, 196, 88, 48, 29, 35, 37, 48, 93, 180] }, // Am
+            "Darwin": { name: "達爾文 (澳)", lat: -12.46, lon: 130.84, temps: [28.3, 28.1, 28.5, 29.3, 28.5, 26.6, 26.0, 26.9, 28.8, 29.8, 29.8, 29.1], precip: [426, 372, 316, 101, 21, 2, 1, 5, 16, 57, 141, 252] }, // Aw
+            "Toamasina": { name: "圖阿馬西納 (馬達加斯加)", lat: -18.15, lon: 49.42, temps: [26.5, 26.6, 26.1, 25.2, 23.6, 22.0, 21.4, 21.6, 22.4, 23.7, 25.1, 26.2], precip: [410, 400, 451, 301, 230, 246, 276, 191, 131, 100, 131, 261] }, // Af (Madagascar East)
+
+            // --- B: DRY ---
+            "AliceSprings": { name: "愛麗斯泉 (澳)", lat: -23.70, lon: 133.88, temps: [28.8, 27.9, 25.0, 20.3, 15.6, 12.4, 12.2, 14.8, 19.3, 23.9, 26.5, 28.2], precip: [40, 44, 32, 16, 19, 14, 21, 9, 9, 22, 29, 38] }, // BWh
+            "Turpan": { name: "吐魯番 (中)", lat: 42.91, lon: 89.19, temps: [-7.6, -1.9, 8.7, 19.8, 26.5, 31.4, 33.0, 31.3, 25.0, 14.9, 3.8, -5.3], precip: [1, 1, 2, 3, 5, 8, 10, 8, 4, 2, 1, 1] }, // BWk
+            "Toliara": { name: "圖利亞拉 (馬達加斯加)", lat: -23.35, lon: 43.67, temps: [27.5, 27.5, 26.7, 24.7, 22.2, 20.1, 19.8, 20.8, 22.7, 24.9, 26.3, 27.2], precip: [93, 86, 36, 11, 16, 17, 7, 5, 8, 9, 20, 97] }, // BSh (Madagascar West)
+            "Mildura": { name: "米爾迪拉 (澳)", lat: -34.20, lon: 142.13, temps: [23.7, 23.2, 20.6, 16.8, 13.5, 10.8, 10.1, 11.6, 14.3, 17.3, 20.0, 22.3], precip: [23, 23, 21, 20, 25, 25, 28, 28, 28, 30, 25, 25] }, // BSk
+
+            // --- C: TEMPERATE ---
+            "Sydney": { name: "雪梨 (澳)", lat: -33.86, lon: 151.20, temps: [23.0, 23.0, 21.7, 18.9, 15.7, 13.1, 12.2, 13.3, 15.6, 18.2, 20.0, 21.9], precip: [102, 119, 129, 126, 121, 132, 97, 81, 69, 77, 84, 78] }, // Cfa
+            "Melbourne": { name: "墨爾本 (澳)", lat: -37.81, lon: 144.96, temps: [20.3, 20.2, 18.5, 15.6, 12.9, 10.8, 10.1, 11.2, 12.9, 14.8, 16.8, 18.7], precip: [47, 47, 51, 57, 56, 49, 48, 50, 58, 66, 60, 59] }, // Cfb
+            "Reykjavik": { name: "雷克雅維克 (冰)", lat: 64.14, lon: -21.94, temps: [-0.5, 0.4, 0.5, 2.9, 6.3, 9.0, 10.6, 10.3, 7.4, 4.4, 1.1, -0.2], precip: [76, 72, 71, 58, 44, 50, 52, 67, 86, 86, 73, 94] }, // Cfc
+            "Perth": { name: "伯斯 (澳)", lat: -31.95, lon: 115.86, temps: [24.5, 24.8, 22.9, 19.4, 16.0, 13.6, 12.8, 13.3, 15.0, 17.2, 20.1, 22.7], precip: [10, 12, 19, 36, 88, 125, 145, 126, 88, 40, 22, 11] }, // Csa
+            "Albany": { name: "奧爾巴尼 (澳)", lat: -35.02, lon: 117.88, temps: [20.1, 20.3, 19.3, 17.2, 14.8, 12.9, 12.1, 12.5, 13.5, 14.8, 16.8, 18.6], precip: [24, 28, 43, 69, 96, 109, 119, 102, 83, 66, 47, 33] }, // Csb
+            "Kunming": { name: "昆明 (中)", lat: 25.04, lon: 102.71, temps: [9.2, 11.2, 14.6, 17.7, 19.7, 20.3, 19.8, 19.3, 17.5, 15.0, 11.6, 8.8], precip: [12, 16, 20, 25, 90, 180, 205, 200, 120, 80, 40, 12] }, // Cwb
+
+            // --- D: CONTINENTAL ---
+            "Chicago": { name: "芝加哥 (美)", lat: 41.87, lon: -87.62, temps: [-3.8, -1.8, 3.8, 9.8, 15.7, 21.2, 23.8, 22.9, 18.6, 11.7, 4.8, -2.1], precip: [52, 47, 63, 86, 96, 94, 94, 107, 82, 80, 80, 57] }, // Dfa
+            "Moscow": { name: "莫斯科 (俄)", lat: 55.75, lon: 37.61, temps: [-9.3, -8.3, -2.8, 5.8, 13.1, 16.9, 18.7, 16.9, 11.2, 5.1, -1.2, -6.1], precip: [42, 36, 34, 38, 52, 75, 88, 77, 60, 60, 52, 46] }, // Dfb
+            "Anchorage": { name: "安克拉治 (美)", lat: 61.21, lon: -149.90, temps: [-8.3, -6.6, -2.7, 3.3, 9.3, 13.4, 15.3, 14.1, 9.4, 2.1, -4.8, -7.2], precip: [20, 19, 16, 12, 18, 29, 46, 62, 76, 54, 30, 29] }, // Dfc
+            "Beijing": { name: "北京 (中)", lat: 39.90, lon: 116.40, temps: [-3.5, -0.6, 6.0, 14.1, 20.3, 24.8, 26.5, 25.2, 20.2, 13.0, 4.3, -1.9], precip: [3, 8, 10, 25, 38, 78, 185, 160, 48, 27, 10, 3] }, // Dwa
+            "Vladivostok": { name: "海參崴 (俄)", lat: 43.13, lon: 131.91, temps: [-11.9, -8.4, -1.8, 5.1, 10.5, 14.8, 19.1, 20.2, 16.0, 8.9, -0.9, -8.1], precip: [14, 19, 27, 48, 81, 110, 164, 153, 126, 59, 39, 22] }, // Dwb
+            "Mohe": { name: "漠河 (中)", lat: 52.97, lon: 122.52, temps: [-28.3, -23.9, -12.9, -0.2, 8.4, 15.7, 18.2, 14.9, 7.3, -3.2, -18.4, -27.6], precip: [7, 5, 8, 23, 40, 71, 101, 91, 51, 23, 13, 8] }, // Dwc
+            "Yakutsk": { name: "雅庫次克 (俄)", lat: 62.03, lon: 129.67, temps: [-38.6, -33.8, -20.1, -4.8, 7.5, 16.4, 19.5, 15.2, 5.9, -7.8, -27.3, -37.7], precip: [9, 8, 6, 9, 20, 35, 39, 37, 31, 21, 16, 10] }, // Dwd
+
+            // --- E: POLAR ---
+            "Nuuk": { name: "努克 (格陵蘭)", lat: 64.18, lon: -51.72, temps: [-8.0, -8.5, -8.1, -2.8, 2.5, 6.1, 8.5, 8.0, 4.9, 0.3, -3.1, -6.2], precip: [40, 42, 49, 49, 55, 62, 82, 89, 81, 62, 60, 48] }, // ET
+            "VostokStation": { name: "東方站 (南極)", lat: -78.46, lon: 106.86, temps: [-32.1, -44.3, -57.9, -64.7, -65.6, -65.2, -66.9, -67.6, -66.0, -57.1, -43.1, -32.1], precip: [1, 1, 2, 2, 3, 2, 2, 2, 2, 2, 1, 1] } // EF
         };
         
         const koppenColorData = {
@@ -302,8 +360,8 @@
             'Cfa': { gridcode: 14, name: '溫帶濕潤夏熱', color: '#999966', description: '夏熱多雨，冬溫濕潤。'},
             'Cfb': { gridcode: 15, name: '溫帶海洋性', color: '#B3B38C', description: '冬溫夏涼，全年有雨。'},
             'Cfc': { gridcode: 16, name: '副極地海洋性', color: '#CCCCA3', description: '無明顯夏季，冬溫濕潤。'},
-            'Dfa': { gridcode: 25, name: '濕潤大陸夏熱(溫帶大陸性氣候)', color: '#9999CC', description: '夏熱冬寒，四季分明。'},
-            'Dfb': { gridcode: 26, name: '濕潤大陸夏涼(溫帶大陸性氣候)', color: '#A8A8D6', description: '夏涼冬寒，四季分明。'},
+            'Dfa': { gridcode: 25, name: '濕潤大陸夏熱', color: '#9999CC', description: '夏熱冬寒，四季分明。'},
+            'Dfb': { gridcode: 26, name: '濕潤大陸夏涼', color: '#A8A8D6', description: '夏涼冬寒，四季分明。'},
             'Dfc': { gridcode: 27, name: '亞寒帶', color: '#B8B8E0', description: '夏短涼，冬長嚴寒。'},
             'Dfd': { gridcode: 28, name: '亞寒帶(嚴冬)', color: '#C8C8EA', description: '夏短涼，冬極嚴寒。'},
             'Dwa': { gridcode: 21, name: '季風大陸夏熱', color: '#B399CC', description: '夏熱多雨，冬寒乾燥。'},
@@ -315,7 +373,7 @@
         };
 
         // --- MAP INITIALIZATION ---
-        const map = L.map('map', { zoomControl: true }).setView([23.973875, 120.982025], 7); // Center on Taiwan
+        const map = L.map('map', { zoomControl: true }).setView([23.973875, 120.982025], 5); // Center on Taiwan
         map.zoomControl.setPosition('topleft');
         
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -324,21 +382,122 @@
 
         // --- CHART & UI VARIABLES ---
         const mainCtx = document.getElementById('climate-chart').getContext('2d');
+        const sandboxCtx = document.getElementById('sandbox-chart').getContext('2d');
         const quizCtx = document.getElementById('quiz-chart').getContext('2d');
-        let mainClimateChart, quizClimateChart, quizAnswerMarker;
+        let mainClimateChart, sandboxClimateChart, quizClimateChart, quizAnswerMarker;
         let currentQuizKey = null;
+        let quizHistory = [];
+
+        // --- KÖPPEN CLASSIFICATION LOGIC ---
+        function calculateKoppenType(temps, precip, lat = 30) {
+            const avgTemp = temps.reduce((a, b) => a + b, 0) / 12;
+            const totalPrecip = precip.reduce((a, b) => a + b, 0);
+            const minTemp = Math.min(...temps);
+            const maxTemp = Math.max(...temps);
+            const monthsOver10 = temps.filter(t => t > 10).length;
+
+            const summerMonths = (lat >= 0) ? [3, 4, 5, 6, 7, 8] : [9, 10, 11, 0, 1, 2];
+            const winterMonths = (lat >= 0) ? [9, 10, 11, 0, 1, 2] : [3, 4, 5, 6, 7, 8];
+            
+            const precipSummer = summerMonths.reduce((sum, i) => sum + (precip[i] || 0), 0);
+            const precipWinter = winterMonths.reduce((sum, i) => sum + (precip[i] || 0), 0);
+            
+            const precipWettestMonth = Math.max(...precip);
+            const precipDriestMonth = Math.min(...precip);
+
+            const precipWettestMonthSummer = Math.max(...summerMonths.map(i => precip[i] || 0));
+            const precipDriestMonthSummer = Math.min(...summerMonths.map(i => precip[i] || 0));
+            const precipWettestMonthWinter = Math.max(...winterMonths.map(i => precip[i] || 0));
+            const precipDriestMonthWinter = Math.min(...winterMonths.map(i => precip[i] || 0));
+
+            // Step 1: Check for E climates
+            if (maxTemp <= 10) {
+                return maxTemp <= 0 ? 'EF' : 'ET';
+            }
+
+            // Step 2: Check for B climates
+            let pThreshold;
+            if (totalPrecip === 0) pThreshold = 20 * avgTemp + 140; // handle divide by zero
+            else if (precipSummer / totalPrecip >= 0.7) {
+                pThreshold = 20 * avgTemp + 280; // Summer concentration
+            } else if (precipWinter / totalPrecip >= 0.7) {
+                pThreshold = 20 * avgTemp; // Winter concentration
+            } else {
+                pThreshold = 20 * avgTemp + 140; // Even distribution
+            }
+
+            if (totalPrecip < pThreshold) {
+                const thirdLetter = avgTemp >= 18 ? 'h' : 'k';
+                if (totalPrecip < pThreshold / 2) {
+                    return 'BW' + thirdLetter;
+                } else {
+                    return 'BS' + thirdLetter;
+                }
+            }
+
+            // Step 3: Check for A, C, D climates
+            let firstLetter = '';
+            if (minTemp >= 18) firstLetter = 'A';
+            else if (minTemp <= -3) firstLetter = 'D';
+            else firstLetter = 'C';
+
+            let secondLetter = '';
+            if (firstLetter === 'A') {
+                if (precipDriestMonth >= 60) {
+                    secondLetter = 'f';
+                } else if (totalPrecip > 25 * (100 - precipDriestMonth)) { 
+                    secondLetter = 'm';
+                } else {
+                    secondLetter = 'w';
+                }
+                return 'A' + secondLetter;
+            }
+
+            // For C and D climates
+            const isSummerDry = (lat >= 0) ? 
+                (precipDriestMonthSummer < 40 && precipDriestMonthSummer < precipWettestMonthWinter / 3) :
+                (precipDriestMonthSummer < 40 && precipDriestMonthSummer < precipWettestMonthWinter / 3);
+            
+            const isWinterDry = (lat >= 0) ?
+                (precipDriestMonthWinter < precipWettestMonthSummer / 10) :
+                (precipDriestMonthWinter < precipWettestMonthSummer / 10);
+
+            if (isSummerDry) secondLetter = 's';
+            else if (isWinterDry) secondLetter = 'w';
+            else secondLetter = 'f';
+
+            let thirdLetter = '';
+            if (firstLetter === 'C') {
+                if (maxTemp >= 22) thirdLetter = 'a';
+                else if (monthsOver10 >= 4) thirdLetter = 'b';
+                else thirdLetter = 'c';
+            } else if (firstLetter === 'D') {
+                 if (minTemp < -38) thirdLetter = 'd';
+                 else if (maxTemp >= 22) thirdLetter = 'a';
+                 else if (monthsOver10 >= 4) thirdLetter = 'b';
+                 else thirdLetter = 'c';
+            }
+            
+            return firstLetter + secondLetter + thirdLetter;
+        }
+
 
         // --- CHART RENDERING FUNCTION ---
-        function createOrUpdateClimateChart(ctx, cityData, chartInstance) {
+        function createOrUpdateClimateChart(ctx, chartData, chartInstance) {
             const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
             if (chartInstance) { chartInstance.destroy(); }
+            const koppenType = chartData.type || calculateKoppenType(chartData.temps, chartData.precip, chartData.lat);
+            const typeInfo = koppenColorData[koppenType] || { name: '未知類型' };
+            
+            const chartTitle = chartData.name ? `${chartData.name} 氣候圖` : `模擬氣候圖 (${koppenType} - ${typeInfo.name})`;
+            
             return new Chart(ctx, {
                 type: 'bar', data: { labels: months, datasets: [
-                        { type: 'line', label: '溫度 (°C)', data: cityData.temps, borderColor: '#ef4444', backgroundColor: '#ef4444', yAxisID: 'yTemp', tension: 0.3, borderWidth: 2 },
-                        { type: 'bar', label: '降水量 (mm)', data: cityData.precip, backgroundColor: '#3b82f6', borderColor: '#3b82f6', yAxisID: 'yPrecip', }
+                        { type: 'line', label: '溫度 (°C)', data: chartData.temps, borderColor: '#ef4444', backgroundColor: '#ef4444', yAxisID: 'yTemp', tension: 0.3, borderWidth: 2.5, pointBackgroundColor: '#ef4444' },
+                        { type: 'bar', label: '降水量 (mm)', data: chartData.precip, backgroundColor: '#3b82f6', borderColor: '#3b82f6', yAxisID: 'yPrecip', }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: true, plugins: { title: { display: true, text: `${cityData.name || '匿名'} 氣候圖`, font: { size: 16, family: "'Noto Sans TC', sans-serif" } }, legend: { display: true, position: 'bottom' } },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { title: { display: true, text: chartTitle, font: { size: 16, family: "'Noto Sans TC', sans-serif" } }, legend: { display: true, position: 'bottom' } },
                     scales: { x: { title: { display: true, text: '月份', font: { size: 12, family: "'Noto Sans TC', sans-serif" } } },
                         yTemp: { type: 'linear', position: 'left', title: { display: true, text: '氣溫 (°C)', font: { size: 12, family: "'Noto Sans TC', sans-serif" } }, grid: { drawOnChartArea: false } },
                         yPrecip: { type: 'linear', position: 'right', title: { display: true, text: '降水量 (mm)', font: { size: 12, family: "'Noto Sans TC', sans-serif" } }, }
@@ -349,7 +508,8 @@
 
         // --- UI UPDATE FUNCTION ---
         function updateInfoPanel(cityKey) {
-            const city = cityData[cityKey];
+            const city = JSON.parse(JSON.stringify(cityData[cityKey])); // Deep copy
+            city.type = calculateKoppenType(city.temps, city.precip, city.lat); // Recalculate for accuracy
             const climateDetail = koppenColorData[city.type] || { name: '未知類型', description: '無詳細資料。' };
             document.getElementById('city-name').textContent = city.name;
             document.getElementById('climate-type').textContent = `${climateDetail.name} (${city.type})`;
@@ -365,53 +525,87 @@
 
         // --- CLIMATE ANALYSIS LOGIC ---
         function generateAnalysis(city, container) {
-            const { temps, precip, lat, type } = city;
+            const { temps, precip, lat } = city;
+            const type = calculateKoppenType(temps, precip, lat);
             const minTemp = Math.min(...temps);
             const maxTemp = Math.max(...temps);
             const totalPrecip = precip.reduce((a,b) => a + b, 0);
             let analysisHtml = `<h5>判讀依據分析</h5>`;
-            let tempAnalysis = '', precipAnalysis = '';
             
-            if (type.startsWith('E')) { tempAnalysis = maxTemp < 0 ? `最暖月均溫 ${maxTemp.toFixed(1)}°C 仍在冰點以下，屬於極地冰原氣候(EF)。` : `最暖月均溫 ${maxTemp.toFixed(1)}°C 介於 0-10°C 之間，屬於極地苔原氣候(ET)。`; } 
-            else if (type.startsWith('A')) { tempAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C 高於 18°C，屬於熱帶氣候(A)。`; } 
-            else if (type.startsWith('C')) { tempAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C 介於 -3°C 至 18°C 之間，屬於溫帶氣候(C)。`; } 
-            else if (type.startsWith('D')) { tempAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C 低於 -3°C，屬於寒帶氣候(D)。`; } 
-            else { tempAnalysis = `此地年均溫與降水量的關係符合乾燥氣候的定義，優先判斷為乾燥氣候(B)。`; }
+            const firstLetter = type.charAt(0);
+            let tempAnalysis = '', precipAnalysis = '', thirdLetterAnalysis = '';
 
-            const precipType = type.length > 1 ? type[1] : ''; 
-
-            if (type.startsWith('B')) { precipAnalysis = `年總降水量僅 ${totalPrecip.toFixed(0)} mm，非常稀少。`; } 
-            else if (type.startsWith('E')) { precipAnalysis = `全年低溫，降水稀少（年約 ${totalPrecip.toFixed(0)} mm），且多為固態降雪。`; } 
-            else {
-                 switch (precipType) {
-                    case 'f': precipAnalysis = `降水季節分布相對均勻，無明顯乾季(f)。`; break;
-                    case 's': precipAnalysis = `夏季(${lat > 0 ? '6-8月':'12-2月'})乾燥，冬季多雨，呈現夏乾冬雨(s)的型態。`; break;
-                    case 'w': precipAnalysis = `冬季(${lat > 0 ? '12-2月':'6-8月'})乾燥，夏季多雨，呈現冬乾夏雨(w)的型態。`; break;
-                    case 'm': precipAnalysis = `降水型態介於雨林與莽原之間，屬於熱帶季風(m)型。`; break;
-                    default: precipAnalysis = `降水季節分布較為特殊。`; break;
-                 }
+            // 1. First letter
+            if (firstLetter === 'E') tempAnalysis = `最暖月均溫 ${maxTemp.toFixed(1)}°C ≤ 10°C，屬極地氣候(E)。`;
+            else if (firstLetter === 'B') tempAnalysis = `年總降水量 ${totalPrecip.toFixed(0)}mm 低於乾燥閾值，屬乾燥氣候(B)。`;
+            else if (firstLetter === 'A') tempAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C ≥ 18°C，屬熱帶氣候(A)。`;
+            else if (firstLetter === 'D') tempAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C ≤ -3°C，屬寒帶氣候(D)。`;
+            else if (firstLetter === 'C') tempAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C 介於 -3°C ~ 18°C 之間，屬溫帶氣候(C)。`;
+            
+            // 2. Second letter
+            const secondLetter = type.length > 1 ? type[1] : '';
+            if (['A', 'C', 'D'].includes(firstLetter)) {
+                if (secondLetter === 'f') precipAnalysis = `降水季節分布相對均勻，無明顯乾季(f)。`;
+                else if (secondLetter === 's') precipAnalysis = `夏季(${lat > 0 ? '6-8月':'12-2月'})乾燥，冬季多雨，呈現夏乾冬雨(s)型態。`;
+                else if (secondLetter === 'w') precipAnalysis = `冬季(${lat > 0 ? '12-2月':'6-8月'})乾燥，夏季多雨，呈現冬乾夏雨(w)型態。`;
+                else if (secondLetter === 'm') precipAnalysis = `降水型態介於雨林與莽原之間，屬熱帶季風(m)型。`;
+            } else {
+                 precipAnalysis = `年總降水量 ${totalPrecip.toFixed(0)}mm。`
             }
-            analysisHtml += `<p><b>1. 氣溫判讀：</b>${tempAnalysis}</p>`;
-            analysisHtml += `<p><b>2. 降水判讀：</b>${precipAnalysis}</p>`;
-            analysisHtml += `<p><b>3. 綜合結論：</b>結合氣溫與降水特徵，此地氣候類型為 <b>${type} (${koppenColorData[type].name})</b>。</p>`;
+            
+            // 3. Third letter
+            const thirdLetter = type.length > 2 ? type[2] : '';
+            if (thirdLetter) {
+                if (thirdLetter === 'a') thirdLetterAnalysis = `最暖月均溫 ${maxTemp.toFixed(1)}°C ≥ 22°C，為炎夏(a)。`;
+                else if (thirdLetter === 'b') thirdLetterAnalysis = `最暖月均溫 ${maxTemp.toFixed(1)}°C < 22°C 且暖於10°C月份≥4個，為暖夏(b)。`;
+                else if (thirdLetter === 'c') thirdLetterAnalysis = `暖於10°C月份<4個，為涼夏(c)。`;
+                else if (thirdLetter === 'd') thirdLetterAnalysis = `最冷月均溫 ${minTemp.toFixed(1)}°C < -38°C，為嚴冬(d)。`;
+                else if (thirdLetter === 'h') thirdLetterAnalysis = `年均溫 ≥ 18°C，為熱(h)。`;
+                else if (thirdLetter === 'k') thirdLetterAnalysis = `年均溫 < 18°C，為冷(k)。`;
+            }
+
+            analysisHtml += `<p><b>1. 氣溫主帶：</b>${tempAnalysis}</p>`;
+            analysisHtml += `<p><b>2. 降水季節：</b>${precipAnalysis}</p>`;
+            if (thirdLetterAnalysis) analysisHtml += `<p><b>3. 氣溫程度：</b>${thirdLetterAnalysis}</p>`;
+            analysisHtml += `<p><b>最終結論：</b>綜合判斷為 <b>${type} (${(koppenColorData[type] || {}).name || '未知'})</b>。</p>`;
             container.innerHTML = analysisHtml;
         }
 
-        // --- ADDING CITY MARKERS AND POPULATING SELECTOR ---
-        const selector = document.getElementById('city-selector');
-        Object.keys(cityData).forEach(key => {
+        // --- POPULATE SELECTORS ---
+        const citySelector = document.getElementById('city-selector');
+        const sandboxCitySelector = document.getElementById('load-city-sandbox');
+        const allCityKeys = Object.keys(cityData);
+        // Sort city keys, Taiwan cities first, then alphabetically
+        allCityKeys.sort((a, b) => {
+            const aIsTaiwan = cityData[a].name.includes('臺灣');
+            const bIsTaiwan = cityData[b].name.includes('臺灣');
+            if (aIsTaiwan && !bIsTaiwan) return -1;
+            if (!aIsTaiwan && bIsTaiwan) return 1;
+            return cityData[a].name.localeCompare(cityData[b].name, 'zh-Hant');
+        });
+
+        allCityKeys.forEach(key => {
             const city = cityData[key];
-            const markerColor = koppenColorData[city.type] ? koppenColorData[city.type].color : '#808080';
+            // Recalculate type based on our function to ensure consistency
+            const calculatedType = calculateKoppenType(city.temps, city.precip, city.lat);
+            cityData[key].type = calculatedType; // Update the master data object
+
+            const markerColor = koppenColorData[calculatedType] ? koppenColorData[calculatedType].color : '#808080';
             const customIcon = L.divIcon({ className: 'custom-div-icon', html: `<div style="background-color:${markerColor};" class="w-5 h-5 rounded-full border-2 border-white shadow-xl"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] });
             const marker = L.marker([city.lat, city.lon], { icon: customIcon }).addTo(map);
             marker.bindTooltip(city.name, { permanent: false, direction: 'top', offset: [0, -10], className: 'city-label-tooltip' });
-            marker.on('click', () => { if (document.getElementById('main-view').style.display !== 'none') { map.setView([city.lat, city.lon], 7); updateInfoPanel(key); } });
+            marker.on('click', () => { 
+                if (document.getElementById('main-view').style.display !== 'none') { 
+                    map.setView([city.lat, city.lon], 7); updateInfoPanel(key); 
+                }
+            });
             const option = document.createElement('option');
-            option.value = key; option.textContent = `${city.name} (${city.type})`;
-            selector.appendChild(option);
+            option.value = key; option.textContent = `${city.name} (${calculatedType})`;
+            citySelector.appendChild(option);
+            sandboxCitySelector.appendChild(option.cloneNode(true));
         });
         
-        selector.addEventListener('change', (event) => { const cityKey = event.target.value; const city = cityData[cityKey]; map.setView([city.lat, city.lon], 7); updateInfoPanel(cityKey); });
+        citySelector.addEventListener('change', (event) => { const cityKey = event.target.value; const city = cityData[cityKey]; map.setView([city.lat, city.lon], 7); updateInfoPanel(cityKey); });
         
         // --- ADDING KÖPPEN CLIMATE GEOJSON LAYER ---
         const climateJsonUrl = 'https://gist.githubusercontent.com/gemini-generative-ai/e4bf815ab9c342d4a572242c73d9319e/raw/33a18a803f26a111244e883e449a04f2d3fcb00f/koppen_climate.geojson';
@@ -435,124 +629,123 @@
 
         // --- LEGEND LOGIC ---
         let legendControl;
-        function setupLegend() {
-            const legendContainer = document.getElementById('mobile-legend-container');
-            const legendContent = getLegendHTML();
+        // ... (rest of legend logic is unchanged but will be called)
 
-            if (window.innerWidth < 1024) { // Mobile
-                if (legendControl) {
-                    map.removeControl(legendControl);
-                    legendControl = null;
+        // --- TAB SWITCHING LOGIC ---
+        const tabs = {
+            main: document.getElementById('tab-main'),
+            sandbox: document.getElementById('tab-sandbox'),
+            quiz: document.getElementById('tab-quiz'),
+        };
+        const views = {
+            main: document.getElementById('main-view'),
+            sandbox: document.getElementById('sandbox-view'),
+            quiz: document.getElementById('quiz-view'),
+        }
+
+        Object.keys(tabs).forEach(key => {
+            tabs[key].addEventListener('click', () => {
+                Object.values(tabs).forEach(t => t.classList.remove('active'));
+                tabs[key].classList.add('active');
+                
+                Object.values(views).forEach(v => v.style.display = 'none');
+                views[key].style.display = 'block';
+
+                // Reset quiz to start screen when tab is clicked
+                if(key === 'quiz') {
+                    document.getElementById('quiz-start-screen').style.display = 'block';
+                    document.getElementById('quiz-question-area').style.display = 'none';
+                    document.getElementById('quiz-summary-screen').style.display = 'none';
                 }
-                legendContainer.innerHTML = `<div class="legend">${legendContent}</div>`;
-            } else { // Desktop
-                legendContainer.innerHTML = '';
-                if (!legendControl) {
-                    legendControl = L.control({position: 'bottomright'});
-                    legendControl.onAdd = function (map) {
-                        const div = L.DomUtil.create('div', 'legend');
-                        div.innerHTML = legendContent;
-                        makeDraggable(div);
-                        return div;
-                    };
-                    legendControl.addTo(map);
-                }
+            });
+        });
+
+        // --- SANDBOX LOGIC ---
+        const tempSlidersContainer = document.getElementById('temp-sliders');
+        const precipSlidersContainer = document.getElementById('precip-sliders');
+
+        function initSandbox() {
+            for (let i = 1; i <= 12; i++) {
+                // Temperature Slider
+                tempSlidersContainer.innerHTML += `
+                    <div class="slider-container text-sm">
+                        <label for="temp${i}">${i}月</label>
+                        <input type="range" id="temp${i}" min="-40" max="40" value="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <span id="temp-val${i}" class="font-mono text-right">10°C</span>
+                    </div>`;
+                // Precipitation Slider
+                precipSlidersContainer.innerHTML += `
+                    <div class="slider-container text-sm">
+                        <label for="precip${i}">${i}月</label>
+                        <input type="range" id="precip${i}" min="0" max="600" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <span id="precip-val${i}" class="font-mono text-right">50mm</span>
+                    </div>`;
             }
+
+            for (let i = 1; i <= 12; i++) {
+                document.getElementById(`temp${i}`).addEventListener('input', updateSandbox);
+                document.getElementById(`precip${i}`).addEventListener('input', updateSandbox);
+            }
+            updateSandbox();
         }
 
-        function getLegendHTML() {
-            let html = `<div class="legend-header">圖例</div><div class="legend-content">`;
-            const climateGroups = {
-                'A: 熱帶': ['Af', 'Am', 'Aw'], 'B: 乾燥': ['BWh', 'BWk', 'BSh', 'BSk'],
-                'C: 溫帶': ['Cfa', 'Cfb', 'Csa', 'Csb', 'Cwa', 'Cwb', 'Cfc'],
-                'D: 寒帶': ['Dfa', 'Dfb', 'Dfc', 'Dfd', 'Dwa', 'Dwb', 'Dwc', 'Dwd'],
-                'E: 極地': ['ET', 'EF']
-            };
-            for (const groupName in climateGroups) {
-                html += `<h4>${groupName}</h4>`;
-                climateGroups[groupName].forEach(typeCode => {
-                    const climateDetail = koppenColorData[typeCode];
-                    if (climateDetail) { html += `<i style="background:${climateDetail.color}"></i> ${typeCode}: ${climateDetail.name}<br>`; }
-                });
+        function updateSandbox() {
+            let temps = [], precip = [];
+            for (let i = 1; i <= 12; i++) {
+                const tempVal = parseFloat(document.getElementById(`temp${i}`).value);
+                const precipVal = parseFloat(document.getElementById(`precip${i}`).value);
+                temps.push(tempVal);
+                precip.push(precipVal);
+                document.getElementById(`temp-val${i}`).textContent = `${tempVal.toFixed(0)}°C`;
+                document.getElementById(`precip-val${i}`).textContent = `${precipVal.toFixed(0)}mm`;
             }
-            html += `</div>`;
-            return html;
+            
+            const sandboxData = { temps, precip, name: '自訂' };
+            sandboxClimateChart = createOrUpdateClimateChart(sandboxCtx, sandboxData, sandboxClimateChart);
+            generateAnalysis(sandboxData, document.getElementById('sandbox-analysis'));
         }
-        
-        function makeDraggable(element) {
-            const header = element.querySelector('.legend-header');
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            header.onmousedown = dragMouseDown;
 
-            function dragMouseDown(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
+        sandboxCitySelector.addEventListener('change', (e) => {
+            const cityKey = e.target.value;
+            if (!cityKey) return;
+            const city = cityData[cityKey];
+            for (let i = 0; i < 12; i++) {
+                document.getElementById(`temp${i+1}`).value = city.temps[i];
+                document.getElementById(`precip${i+1}`).value = city.precip[i];
             }
+            updateSandbox();
+        });
 
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-            }
 
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
-        }
-        
         // --- QUIZ LOGIC ---
-        const toggleQuizBtn = document.getElementById('toggle-quiz-btn');
-        const mainView = document.getElementById('main-view');
-        const quizView = document.getElementById('quiz-view');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
         const submitBtn = document.getElementById('submit-answer');
         const nextBtn = document.getElementById('next-question');
+        const endQuizBtn = document.getElementById('end-quiz-btn');
+        const backToMainBtn = document.getElementById('back-to-main-btn');
+        
+        startQuizBtn.addEventListener('click', startQuiz);
+        restartQuizBtn.addEventListener('click', startQuiz);
+        endQuizBtn.addEventListener('click', showQuizSummary);
 
-        toggleQuizBtn.addEventListener('click', () => {
-            const isQuizActive = mainView.style.display === 'none';
-            if (!isQuizActive) {
-                loadNewQuestion();
-                mainView.style.display = 'none';
-                quizView.style.display = 'block';
-                toggleQuizBtn.textContent = '結束練習';
-                toggleQuizBtn.classList.replace('bg-green-500', 'bg-red-500');
-                toggleQuizBtn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
-            } else {
-                mainView.style.display = 'block';
-                quizView.style.display = 'none';
-                toggleQuizBtn.textContent = '開始隨機練習';
-                toggleQuizBtn.classList.replace('bg-red-500', 'bg-green-500');
-                toggleQuizBtn.classList.replace('hover:bg-red-600', 'hover:bg-green-600');
-                if (quizAnswerMarker) { map.removeLayer(quizAnswerMarker); quizAnswerMarker = null; }
-                map.setView([23.973875, 120.982025], 7); 
-            }
+        backToMainBtn.addEventListener('click', () => {
+            document.getElementById('tab-main').click();
         });
         
-        function setupQuizOptionsListeners() {
-            const options = document.querySelectorAll('.quiz-option');
-            options.forEach(option => {
-                option.addEventListener('click', () => {
-                    options.forEach(o => o.classList.remove('selected'));
-                    option.classList.add('selected');
-                });
-            });
+        function startQuiz() {
+            quizHistory = [];
+            document.getElementById('quiz-start-screen').style.display = 'none';
+            document.getElementById('quiz-summary-screen').style.display = 'none';
+            document.getElementById('quiz-question-area').style.display = 'block';
+            loadNewQuestion();
         }
-        
+
         function loadNewQuestion() {
             if (quizAnswerMarker) { map.removeLayer(quizAnswerMarker); quizAnswerMarker = null; }
-            const cityKeys = Object.keys(cityData);
-            currentQuizKey = cityKeys[Math.floor(Math.random() * cityKeys.length)];
+            currentQuizKey = allCityKeys[Math.floor(Math.random() * allCityKeys.length)];
             const city = cityData[currentQuizKey];
-            quizClimateChart = createOrUpdateClimateChart(quizCtx, { ...city, name: '匿名' }, quizClimateChart);
+            quizClimateChart = createOrUpdateClimateChart(quizCtx, { ...city, name: '匿名測驗城市' }, quizClimateChart);
             const correctAnswer = city.type;
             const options = new Set([correctAnswer]);
             const allTypes = Object.keys(koppenColorData);
@@ -563,9 +756,15 @@
             shuffledOptions.forEach(opt => {
                 optionsContainer.innerHTML += `<label class="quiz-option"><input type="radio" name="quiz" value="${opt}" class="sr-only"> ${opt}: ${koppenColorData[opt].name}</label>`;
             });
-            setupQuizOptionsListeners();
+            document.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                });
+            });
             submitBtn.disabled = false;
             submitBtn.style.display = 'inline-block';
+            endQuizBtn.style.display = 'inline-block';
             nextBtn.style.display = 'none';
             document.getElementById('quiz-feedback').innerHTML = '';
             document.getElementById('quiz-answer-info').style.display = 'none';
@@ -579,8 +778,17 @@
             const answerInfoEl = document.getElementById('quiz-answer-info');
             const city = cityData[currentQuizKey];
             const correctAnswer = city.type;
+            const userAnswer = selected.value;
+            const isCorrect = userAnswer === correctAnswer;
             
-            if (selected.value === correctAnswer) {
+            quizHistory.push({
+                questionKey: currentQuizKey,
+                userAnswer: userAnswer,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect
+            });
+            
+            if (isCorrect) {
                 feedbackEl.innerHTML = '答對了！';
                 feedbackEl.className = 'text-green-600 bg-green-100 p-3 rounded-md font-bold';
             } else {
@@ -590,39 +798,215 @@
             
             map.flyTo([city.lat, city.lon], 8); 
             if (quizAnswerMarker) { map.removeLayer(quizAnswerMarker); }
-            quizAnswerMarker = L.circleMarker([city.lat, city.lon], {
-                radius: 15,
-                fillColor: koppenColorData[correctAnswer].color,
-                color: "#fff",
-                weight: 3,
-                opacity: 1,
-                fillOpacity: 0.8
-            }).addTo(map);
+            quizAnswerMarker = L.circleMarker([city.lat, city.lon], { radius: 15, fillColor: koppenColorData[correctAnswer].color, color: "#fff", weight: 3, opacity: 1, fillOpacity: 0.8 }).addTo(map);
 
-            let fullAnswerText = `<h5>正確答案：${city.name}</h5>`;
-            answerInfoEl.innerHTML = fullAnswerText;
+            answerInfoEl.innerHTML = `<h5>正確答案：${city.name}</h5>`;
             generateAnalysis(city, answerInfoEl);
             answerInfoEl.style.display = 'block';
-            submitBtn.disabled = true;
             submitBtn.style.display = 'none';
             nextBtn.style.display = 'inline-block';
         });
-
         nextBtn.addEventListener('click', loadNewQuestion);
 
-        // --- INITIAL LOAD ---
-        window.addEventListener('resize', setupLegend);
-        setupLegend();
-        const toggleRulesBtn = document.getElementById('toggle-rules-btn');
-        const rulesContent = document.getElementById('rules-content');
-        const rulesArrow = document.getElementById('rules-arrow');
-        toggleRulesBtn.addEventListener('click', () => {
-            rulesContent.classList.toggle('hidden');
-            rulesArrow.textContent = rulesContent.classList.contains('hidden') ? '▼' : '▲';
+        function showQuizSummary() {
+            document.getElementById('quiz-question-area').style.display = 'none';
+            document.getElementById('quiz-summary-screen').style.display = 'block';
+
+            const total = quizHistory.length;
+            if (total === 0) {
+                 document.getElementById('quiz-summary-stats').innerHTML = `
+                    <div><p class="text-sm text-gray-500">答對題數</p><p class="text-lg font-bold text-green-600">0</p></div>
+                    <div><p class="text-sm text-gray-500">總題數</p><p class="text-lg font-bold text-gray-700">0</p></div>
+                    <div><p class="text-sm text-gray-500">正確率</p><p class="text-lg font-bold text-blue-600">--</p></div>
+                 `;
+                 document.getElementById('quiz-summary-comment').innerHTML = '<h5>總結評語</h5><p>您尚未開始答題，快點擊「再試一次」開始挑戰吧！</p>';
+                 document.getElementById('quiz-wrong-answers').parentElement.style.display = 'none';
+                return;
+            }
+
+            const correct = quizHistory.filter(q => q.isCorrect).length;
+            const accuracy = (correct / total) * 100;
+
+            document.getElementById('quiz-summary-stats').innerHTML = `
+                <div><p class="text-sm text-gray-500">答對題數</p><p class="text-lg font-bold text-green-600">${correct}</p></div>
+                <div><p class="text-sm text-gray-500">總題數</p><p class="text-lg font-bold text-gray-700">${total}</p></div>
+                <div><p class="text-sm text-gray-500">正確率</p><p class="text-lg font-bold text-blue-600">${accuracy.toFixed(0)}%</p></div>
+            `;
+
+            let comment = '';
+            if (accuracy >= 90) {
+                comment = '<h5>總結評語</h5><p>太棒了！您對柯本氣候分類的掌握非常純熟，幾乎是專家等級了！</p>';
+            } else if (accuracy >= 70) {
+                comment = '<h5>總結評語</h5><p>表現得很好！您對大部分氣候類型都有不錯的理解，可以針對答錯的類型多加練習。</p>';
+            } else if (accuracy >= 50) {
+                comment = '<h5>總結評語</h5><p>還不錯，已經有基本的概念了。多加練習可以幫助您更熟悉不同氣候的判斷細節。</p>';
+            } else {
+                comment = '<h5>總結評語</h5><p>別氣餒！柯本氣候分類有些複雜。建議您回到瀏覽模式多看看範例，或複習判斷法則，很快就能上手！</p>';
+            }
+            document.getElementById('quiz-summary-comment').innerHTML = comment;
+
+            const wrongAnswers = quizHistory.filter(q => !q.isCorrect);
+            const wrongAnswersContainer = document.getElementById('quiz-wrong-answers');
+            if (wrongAnswers.length > 0) {
+                wrongAnswersContainer.parentElement.style.display = 'block';
+                wrongAnswersContainer.innerHTML = wrongAnswers.map(q => `
+                    <div class="p-2 border rounded-md bg-white">
+                        <p class="font-semibold">${cityData[q.questionKey].name}</p>
+                        <p>您的答案: <span class="font-bold text-red-600">${q.userAnswer}</span></p>
+                        <p>正確答案: <span class="font-bold text-green-600">${q.correctAnswer}</span></p>
+                    </div>
+                `).join('');
+            } else {
+                 wrongAnswersContainer.parentElement.style.display = 'block';
+                 wrongAnswersContainer.innerHTML = `<p class="text-center text-gray-500 p-4 bg-green-50 rounded-md">恭喜您全部答對！</p>`;
+            }
+        }
+
+        // --- INITIAL LOAD & MISC ---
+        function setRulesContent() {
+             const container = document.getElementById('rules-content');
+             container.innerHTML = `
+                <h4 class="font-bold text-base mb-2">第一步：判斷特殊氣候</h4>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><b>E (極地)</b>：最暖月均溫 ≤ 10°C</li>
+                    <li id="dry-climate-rule">
+                        <b>B (乾燥)</b>：年降水量 < 乾燥指數
+                        <button id="dryness-help-btn" class="ml-2 text-xs bg-indigo-100 text-indigo-700 font-bold rounded-full w-4 h-4 text-center cursor-pointer hover:bg-indigo-200">?</button>
+                    </li>
+                </ul>
+                <div id="dryness-explanation" class="hidden explanation-box space-y-2">
+                    <p class="font-bold">🤔 如何判斷乾燥氣候？(水桶挑戰！)</p>
+                    <p>想像氣候是個水桶，<b>降雨(P)</b>是倒進去的水💧，而<b>蒸發</b>會讓水漏光。</p>
+                    <p>如果「年總降水量」<b class="text-red-600">少於</b>「年總蒸發量」，氣候就是乾燥的！</p>
+                    <p>蒸發量(乾燥門檻)由兩件事決定：</p>
+                    <ul class="list-decimal list-inside ml-2 space-y-1">
+                        <li><b>基本蒸發 (看溫度🌡️)</b>：年均溫(T)越高，蒸發越快。這是公式中的 <b>20T</b>。</li>
+                        <li><b>季節加成 (看雨季☀️/❄️)</b>：
+                            <ul class="list-disc list-inside ml-4">
+                                <li><b>夏雨型</b>: 雨下在熱天，蒸發超快，所以門檻超高 (公式+280)。</li>
+                                <li><b>冬雨型</b>: 雨下在冷天，蒸發很慢，所以門檻最低 (公式+0)。</li>
+                                <li><b>均勻型</b>: 介於中間 (公式+140)。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="font-semibold">結論：只要實際降雨 P < 乾燥門檻 (20T+X)，就是B型乾燥氣候！</p>
+                </div>
+
+                <h4 class="font-bold text-base mt-4 mb-2">第二步：判斷濕潤氣候主群 (A,C,D)</h4>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><b>A (熱帶)</b>：最冷月均溫 ≥ 18°C</li>
+                    <li><b>D (寒帶)</b>：最冷月均溫 ≤ -3°C</li>
+                    <li><b>C (溫帶)</b>：介於兩者之間</li>
+                </ul>
+
+                <h4 class="font-bold text-base mt-4 mb-2">第三步：用「降水季節」決定第二個字母 (f, w, s, m)</h4>
+                <p>這一步是看雨水什麼時候下，決定氣候的「脾氣」。(僅適用於A, C, D型)</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><b>f (feucht/fully humid)</b>：全年濕潤💧，最乾月的降水量也達標，沒有明顯乾季。</li>
+                    <li><b>w (winter dry)</b>：冬乾夏雨☀️，冬季有明顯乾季，雨水集中在夏季。</li>
+                    <li><b>s (summer dry)</b>：夏乾冬雨❄️，夏季有明顯乾季，雨水集中在冬季 (如地中海型氣候)。</li>
+                    <li><b>m (monsoonal)</b>：熱帶季風🌴，介於雨林(Af)和莽原(Aw)之間的過渡型態。</li>
+                </ul>
+
+                <h4 class="font-bold text-base mt-4 mb-2">第四步：用「溫度程度」決定第三個字母 (a, b, c, d, h, k)</h4>
+                <p>這一步是為氣候加上「溫度形容詞」，讓分類更精確。</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><b>適用於 C/D 型氣候：</b></li>
+                    <ul class="list-disc list-inside ml-4">
+                        <li><b>a (hot summer)</b>：炎夏型🌡️，最熱月均溫 ≥ 22°C。</li>
+                        <li><b>b (warm summer)</b>：暖夏型😌，最熱月均溫 < 22°C，但至少有4個月均溫 ≥ 10°C。</li>
+                        <li><b>c (cool summer)</b>：涼夏型🥶，均溫 ≥ 10°C 的月份只有1-3個月。</li>
+                        <li><b>d (very cold winter)</b>：嚴冬型🧊，最冷月均溫 < -38°C (僅D型)。</li>
+                    </ul>
+                    <li><b>適用於 B 型氣候：</b></li>
+                    <ul class="list-disc list-inside ml-4">
+                        <li><b>h (heiß/hot)</b>：熱型🔥，年均溫 ≥ 18°C。</li>
+                        <li><b>k (kalt/cold)</b>：冷型❄️，年均溫 < 18°C。</li>
+                    </ul>
+                </ul>
+                `;
+            
+            document.getElementById('dryness-help-btn').addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevents the main accordion from closing
+                document.getElementById('dryness-explanation').classList.toggle('hidden');
+            });
+        }
+        setRulesContent();
+        document.getElementById('toggle-rules-btn').addEventListener('click', () => {
+            const content = document.getElementById('rules-content');
+            content.classList.toggle('hidden');
+            document.getElementById('rules-arrow').textContent = content.classList.contains('hidden') ? '▼' : '▲';
         });
 
-        const initialCityKey = "Taipei"; // Start with Taipei
-        updateInfoPanel(initialCityKey);
+        // --- Legend setup (unchanged) ---
+        function setupLegend() {
+            const legendContainer = document.getElementById('mobile-legend-container');
+            const legendContent = getLegendHTML();
+
+            if (window.innerWidth < 1024) { // Mobile
+                if (legendControl) { map.removeControl(legendControl); legendControl = null; }
+                legendContainer.innerHTML = `<div class="legend">${legendContent}</div>`;
+            } else { // Desktop
+                legendContainer.innerHTML = '';
+                if (!legendControl) {
+                    legendControl = L.control({position: 'bottomright'});
+                    legendControl.onAdd = function (map) {
+                        const div = L.DomUtil.create('div', 'legend');
+                        div.innerHTML = legendContent;
+                        L.DomEvent.disableClickPropagation(div); // Prevent map clicks
+                        makeDraggable(div);
+                        return div;
+                    };
+                    legendControl.addTo(map);
+                }
+            }
+        }
+        function getLegendHTML() {
+            let html = `<div class="legend-header">圖例</div><div class="legend-content">`;
+            const climateGroups = {
+                'A: 熱帶': ['Af', 'Am', 'Aw'], 'B: 乾燥': ['BWh', 'BWk', 'BSh', 'BSk'],
+                'C: 溫帶': ['Cfa', 'Cfb', 'Cfc', 'Csa', 'Csb', 'Cwa', 'Cwb'],
+                'D: 寒帶': ['Dfa', 'Dfb', 'Dfc', 'Dfd', 'Dwa', 'Dwb', 'Dwc', 'Dwd'],
+                'E: 極地': ['ET', 'EF']
+            };
+            for (const groupName in climateGroups) {
+                html += `<h4>${groupName}</h4>`;
+                climateGroups[groupName].forEach(typeCode => {
+                    const climateDetail = koppenColorData[typeCode];
+                    if (climateDetail) { html += `<i style="background:${climateDetail.color}"></i> ${typeCode}: ${climateDetail.name}<br>`; }
+                });
+            }
+            html += `</div>`;
+            return html;
+        }
+        function makeDraggable(element) {
+            const header = element.querySelector('.legend-header');
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            header.onmousedown = dragMouseDown;
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX; pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+                pos3 = e.clientX; pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            function closeDragElement() {
+                document.onmouseup = null; document.onmousemove = null;
+            }
+        }
+        window.addEventListener('resize', setupLegend);
+
+        // Initialize App
+        setupLegend();
+        initSandbox();
+        updateInfoPanel(allCityKeys[0]); // Start with the first city in the sorted list
+
     </script>
 </body>
 </html>
