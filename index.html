@@ -294,7 +294,7 @@
 
                 <!-- Footer with author and version -->
                 <footer class="mt-8 pt-4 border-t text-center text-xs text-gray-500">
-                    <p>製作：鄭伉妙，版本2.3 (2025/06)</p>
+                    <p>製作：鄭伉妙，版本2.4 (2025/06)</p>
                 </footer>
 
             </div>
@@ -454,17 +454,17 @@
             }
 
             // For C and D climates
-            const isSummerDry = (lat >= 0) ? 
-                (precipDriestMonthSummer < 40 && precipDriestMonthSummer < precipWettestMonthWinter / 3) :
-                (precipDriestMonthSummer < 40 && precipDriestMonthSummer < precipWettestMonthWinter / 3);
+            // LOGIC FIX: Prioritize 'w' check over 's' check to correctly classify monsoon-influenced climates.
+            const isWinterDry = precipWettestMonthSummer >= 10 * precipDriestMonthWinter;
+            const isSummerDry = precipWettestMonthWinter >= 3 * precipDriestMonthSummer && precipDriestMonthSummer < 40;
             
-            const isWinterDry = (lat >= 0) ?
-                (precipDriestMonthWinter < precipWettestMonthSummer / 10) :
-                (precipDriestMonthWinter < precipWettestMonthSummer / 10);
-
-            if (isSummerDry) secondLetter = 's';
-            else if (isWinterDry) secondLetter = 'w';
-            else secondLetter = 'f';
+            if (isWinterDry) {
+                secondLetter = 'w';
+            } else if (isSummerDry) {
+                secondLetter = 's';
+            } else {
+                secondLetter = 'f';
+            }
 
             let thirdLetter = '';
             if (firstLetter === 'C') {
