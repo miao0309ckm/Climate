@@ -207,7 +207,8 @@
                     <div id="city-info" class="bg-gray-50 p-4 rounded-lg">
                         <h2 id="city-name" class="text-xl font-bold text-blue-600"></h2>
                         <p id="climate-type" class="text-md font-semibold text-gray-700 mt-1"></p>
-                        <p id="climate-description" class="text-sm text-gray-600 mt-2 h-16"></p>
+                        <p id="high-school-climate-type" class="text-sm font-medium text-indigo-600 mt-1"></p>
+                        <p id="climate-description" class="text-sm text-gray-600 mt-2 h-12"></p>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-4 text-center">
                         <div>
@@ -294,7 +295,7 @@
 
                 <!-- Footer with author and version -->
                 <footer class="mt-8 pt-4 border-t text-center text-xs text-gray-500">
-                    <p>製作：鄭伉妙，版本2.4 (2025/06)</p>
+                    <p>製作：鄭伉妙，版本2.5 (2025/06)</p>
                 </footer>
 
             </div>
@@ -346,30 +347,30 @@
         };
         
         const koppenColorData = {
-            'Af': { gridcode: 1, name: '熱帶雨林', color: '#669966', description: '終年高溫多雨，無明顯乾季。'},
-            'Am': { gridcode: 2, name: '熱帶季風', color: '#7DB47D', description: '終年高溫，有短暫乾季。'},
-            'Aw': { gridcode: 3, name: '熱帶莽原', color: '#99CC99', description: '終年高溫，乾濕季分明。'},
-            'BWh': { gridcode: 4, name: '熱帶沙漠', color: '#FFCC66', description: '終年炎熱乾燥，降水稀少。'},
-            'BWk': { gridcode: 5, name: '溫帶沙漠', color: '#FFE066', description: '冬冷夏熱，全年乾燥。'},
-            'BSh': { gridcode: 6, name: '熱帶草原', color: '#FFDB4D', description: '終年高溫，降水較沙漠略多。'},
-            'BSk': { gridcode: 7, name: '溫帶草原', color: '#FFFACD', description: '冬冷夏熱，半乾燥氣候。'},
-            'Csa': { gridcode: 8, name: '地中海夏熱', color: '#CCCC66', description: '夏熱乾，冬溫雨。'},
-            'Csb': { gridcode: 9, name: '地中海夏涼', color: '#D9D977', description: '夏涼乾，冬溫雨。'},
-            'Cwa': { gridcode: 11, name: '溫帶冬乾夏熱', color: '#99CC00', description: '夏熱多雨，冬溫少雨。'},
-            'Cwb': { gridcode: 12, name: '溫帶冬乾夏涼', color: '#AAFF00', description: '夏涼多雨，冬溫少雨。'},
-            'Cfa': { gridcode: 14, name: '溫帶濕潤夏熱', color: '#999966', description: '夏熱多雨，冬溫濕潤。'},
-            'Cfb': { gridcode: 15, name: '溫帶海洋性', color: '#B3B38C', description: '冬溫夏涼，全年有雨。'},
-            'Cfc': { gridcode: 16, name: '副極地海洋性', color: '#CCCCA3', description: '無明顯夏季，冬溫濕潤。'},
-            'Dfa': { gridcode: 25, name: '濕潤大陸夏熱(溫帶大陸性)', color: '#9999CC', description: '夏熱冬寒，四季分明。'},
-            'Dfb': { gridcode: 26, name: '濕潤大陸夏涼(溫帶大陸性)', color: '#A8A8D6', description: '夏涼冬寒，四季分明。'},
-            'Dfc': { gridcode: 27, name: '亞寒帶', color: '#B8B8E0', description: '夏短涼，冬長嚴寒。'},
-            'Dfd': { gridcode: 28, name: '亞寒帶(嚴冬)', color: '#C8C8EA', description: '夏短涼，冬極嚴寒。'},
-            'Dwa': { gridcode: 21, name: '季風大陸夏熱', color: '#B399CC', description: '夏熱多雨，冬寒乾燥。'},
-            'Dwb': { gridcode: 22, name: '季風大陸夏涼', color: '#C2A8D6', description: '夏涼多雨，冬寒乾燥。'},
-            'Dwc': { gridcode: 23, name: '季風亞寒帶', color: '#D1B8E0', description: '夏短涼雨，冬長嚴寒乾燥。'},
-            'Dwd': { gridcode: 24, name: '季風亞寒帶(嚴冬)', color: '#E0C8EA', description: '夏短涼雨，冬極嚴寒乾燥。'},
-            'ET': { gridcode: 29, name: '苔原氣候', color: '#CCCCCC', description: '終年嚴寒，夏短暫且涼。'},
-            'EF': { gridcode: 30, name: '冰原氣候', color: '#F0F0F0', description: '終年酷寒，長年冰封。'}
+            'Af': { name: '熱帶雨林', hs_name: '熱帶雨林氣候', color: '#669966', description: '終年高溫多雨，無明顯乾季。'},
+            'Am': { name: '熱帶季風', hs_name: '熱帶季風氣候', color: '#7DB47D', description: '終年高溫，有短暫乾季。'},
+            'Aw': { name: '熱帶莽原', hs_name: '熱帶莽原氣候', color: '#99CC99', description: '終年高溫，乾濕季分明。'},
+            'BWh':{ name: '熱帶沙漠', hs_name: '熱帶乾燥氣候', color: '#FFCC66', description: '終年炎熱乾燥，降水稀少。'},
+            'BWk':{ name: '溫帶沙漠', hs_name: '溫帶乾燥氣候', color: '#FFE066', description: '冬冷夏熱，全年乾燥。'},
+            'BSh':{ name: '熱帶草原', hs_name: '熱帶乾燥氣候', color: '#FFDB4D', description: '終年高溫，降水較沙漠略多。'},
+            'BSk':{ name: '溫帶草原', hs_name: '溫帶乾燥氣候', color: '#FFFACD', description: '冬冷夏熱，半乾燥氣候。'},
+            'Csa':{ name: '地中海夏熱', hs_name: '溫帶地中海型氣候', color: '#CCCC66', description: '夏熱乾，冬溫雨。'},
+            'Csb':{ name: '地中海夏涼', hs_name: '溫帶地中海型氣候', color: '#D9D977', description: '夏涼乾，冬溫雨。'},
+            'Cwa':{ name: '溫帶冬乾夏熱', hs_name: '溫帶季風氣候', color: '#99CC00', description: '夏熱多雨，冬溫少雨。'},
+            'Cwb':{ name: '溫帶冬乾夏涼', hs_name: '溫帶季風氣候', color: '#AAFF00', description: '夏涼多雨，冬溫少雨。'},
+            'Cfa':{ name: '溫帶濕潤夏熱', hs_name: '溫帶季風氣候', color: '#999966', description: '夏熱多雨，冬溫濕潤。'},
+            'Cfb':{ name: '溫帶海洋性', hs_name: '溫帶海洋性氣候', color: '#B3B38C', description: '冬溫夏涼，全年有雨。'},
+            'Cfc':{ name: '副極地海洋性', hs_name: '溫帶海洋性氣候', color: '#CCCCA3', description: '無明顯夏季，冬溫濕潤。'},
+            'Dfa':{ name: '濕潤大陸夏熱', hs_name: '溫帶大陸性氣候', color: '#9999CC', description: '夏熱冬寒，四季分明。'},
+            'Dfb':{ name: '濕潤大陸夏涼', hs_name: '溫帶大陸性氣候', color: '#A8A8D6', description: '夏涼冬寒，四季分明。'},
+            'Dfc':{ name: '亞寒帶', hs_name: '寒帶氣候', color: '#B8B8E0', description: '夏短涼，冬長嚴寒。'},
+            'Dfd':{ name: '亞寒帶(嚴冬)', hs_name: '寒帶氣候', color: '#C8C8EA', description: '夏短涼，冬極嚴寒。'},
+            'Dwa':{ name: '季風大陸夏熱', hs_name: '溫帶大陸性氣候', color: '#B399CC', description: '夏熱多雨，冬寒乾燥。'},
+            'Dwb':{ name: '季風大陸夏涼', hs_name: '溫帶大陸性氣候', color: '#C2A8D6', description: '夏涼多雨，冬寒乾燥。'},
+            'Dwc':{ name: '季風亞寒帶', hs_name: '寒帶氣候', color: '#D1B8E0', description: '夏短涼雨，冬長嚴寒乾燥。'},
+            'Dwd':{ name: '季風亞寒帶(嚴冬)', hs_name: '寒帶氣候', color: '#E0C8EA', description: '夏短涼雨，冬極嚴寒乾燥。'},
+            'ET': { name: '苔原氣候', hs_name: '極地苔原氣候', color: '#CCCCCC', description: '終年嚴寒，夏短暫且涼。'},
+            'EF': { name: '冰原氣候', hs_name: '極地冰原氣候', color: '#F0F0F0', description: '終年酷寒，長年冰封。'}
         };
 
         // --- MAP INITIALIZATION ---
@@ -505,28 +506,57 @@
                 }
             });
         }
+        
+        function getHighSchoolClassification(cityKey, koppenCode) {
+             if (cityKey === 'Yushan') {
+                return '高地氣候';
+            }
+            const typeInfo = koppenColorData[koppenCode];
+            return typeInfo ? typeInfo.hs_name : '未知類型';
+        }
 
         // --- UI UPDATE FUNCTION ---
         function updateInfoPanel(cityKey) {
             const city = JSON.parse(JSON.stringify(cityData[cityKey])); // Deep copy
             city.type = calculateKoppenType(city.temps, city.precip, city.lat); // Recalculate for accuracy
             const climateDetail = koppenColorData[city.type] || { name: '未知類型', description: '無詳細資料。' };
+            const hsClimateName = getHighSchoolClassification(cityKey, city.type);
+
             document.getElementById('city-name').textContent = city.name;
             document.getElementById('climate-type').textContent = `${climateDetail.name} (${city.type})`;
+            document.getElementById('high-school-climate-type').textContent = `高中分類：${hsClimateName}`;
             document.getElementById('climate-description').textContent = climateDetail.description;
+
             const totalPrecip = city.precip.reduce((a, b) => a + b, 0);
             const avgTemp = city.temps.reduce((a, b) => a + b, 0) / city.temps.length;
             document.getElementById('annual-precip').textContent = `${totalPrecip.toFixed(0)} mm`;
             document.getElementById('annual-temp').textContent = `${avgTemp.toFixed(1)} °C`;
             mainClimateChart = createOrUpdateClimateChart(mainCtx, city, mainClimateChart);
             document.getElementById('city-selector').value = cityKey;
-            generateAnalysis(city, document.getElementById('climate-analysis'));
+            generateAnalysis(cityKey, document.getElementById('climate-analysis'));
         }
 
         // --- CLIMATE ANALYSIS LOGIC ---
-        function generateAnalysis(city, container) {
+        function generateAnalysis(cityObjectOrKey, container) {
+            let city, cityKey;
+            
+            if (typeof cityObjectOrKey === 'string') {
+                cityKey = cityObjectOrKey;
+                city = cityData[cityKey];
+            } else {
+                cityKey = null; // It's an object (from sandbox), no key.
+                city = cityObjectOrKey;
+            }
+            
+            if (!city || !city.temps || !city.precip) {
+                 console.error("Invalid data for analysis", cityObjectOrKey);
+                 container.innerHTML = '<h5>分析錯誤</h5><p>無法生成分析報告，資料不完整。</p>';
+                 return;
+            }
+            
             const { temps, precip, lat } = city;
-            const type = calculateKoppenType(temps, precip, lat);
+            const type = calculateKoppenType(temps, precip, lat || 0); // Use default lat 0 for sandbox
+            const hsClimateName = getHighSchoolClassification(cityKey, type);
             const minTemp = Math.min(...temps);
             const maxTemp = Math.max(...temps);
             const totalPrecip = precip.reduce((a,b) => a + b, 0);
@@ -567,7 +597,7 @@
             analysisHtml += `<p><b>1. 氣溫主帶：</b>${tempAnalysis}</p>`;
             analysisHtml += `<p><b>2. 降水季節：</b>${precipAnalysis}</p>`;
             if (thirdLetterAnalysis) analysisHtml += `<p><b>3. 氣溫程度：</b>${thirdLetterAnalysis}</p>`;
-            analysisHtml += `<p><b>最終結論：</b>綜合判斷為 <b>${type} (${(koppenColorData[type] || {}).name || '未知'})</b>。</p>`;
+            analysisHtml += `<p><b>最終結論：</b>綜合判斷為 <b>${type} (${(koppenColorData[type] || {}).name || '未知'})</b>，在高中課程中通稱為<b>${hsClimateName}</b>。</p>`;
             container.innerHTML = analysisHtml;
         }
 
@@ -754,7 +784,8 @@
             const optionsContainer = document.getElementById('quiz-options');
             optionsContainer.innerHTML = '';
             shuffledOptions.forEach(opt => {
-                optionsContainer.innerHTML += `<label class="quiz-option"><input type="radio" name="quiz" value="${opt}" class="sr-only"> ${opt}: ${koppenColorData[opt].name}</label>`;
+                const hsName = getHighSchoolClassification(null, opt);
+                optionsContainer.innerHTML += `<label class="quiz-option"><input type="radio" name="quiz" value="${opt}" class="sr-only"> ${opt}: ${koppenColorData[opt].name} (${hsName})</label>`;
             });
             document.querySelectorAll('.quiz-option').forEach(option => {
                 option.addEventListener('click', () => {
@@ -801,7 +832,7 @@
             quizAnswerMarker = L.circleMarker([city.lat, city.lon], { radius: 15, fillColor: koppenColorData[correctAnswer].color, color: "#fff", weight: 3, opacity: 1, fillOpacity: 0.8 }).addTo(map);
 
             answerInfoEl.innerHTML = `<h5>正確答案：${city.name}</h5>`;
-            generateAnalysis(city, answerInfoEl);
+            generateAnalysis(currentQuizKey, answerInfoEl);
             answerInfoEl.style.display = 'block';
             submitBtn.style.display = 'none';
             nextBtn.style.display = 'inline-block';
@@ -852,8 +883,8 @@
                 wrongAnswersContainer.innerHTML = wrongAnswers.map(q => `
                     <div class="p-2 border rounded-md bg-white">
                         <p class="font-semibold">${cityData[q.questionKey].name}</p>
-                        <p>您的答案: <span class="font-bold text-red-600">${q.userAnswer}</span></p>
-                        <p>正確答案: <span class="font-bold text-green-600">${q.correctAnswer}</span></p>
+                        <p>您的答案: <span class="font-bold text-red-600">${q.userAnswer}</span> (${getHighSchoolClassification(null, q.userAnswer)})</p>
+                        <p>正確答案: <span class="font-bold text-green-600">${q.correctAnswer}</span> (${getHighSchoolClassification(q.questionKey, q.correctAnswer)})</p>
                     </div>
                 `).join('');
             } else {
