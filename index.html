@@ -508,12 +508,24 @@
         }
         
         function getHighSchoolClassification(cityKey, koppenCode) {
-             if (cityKey === 'Yushan') {
-                return '高地氣候';
+            // Special rules for Taiwan cities to align with local curriculum
+            if (cityKey && cityData[cityKey] && cityData[cityKey].name.includes('臺灣')) {
+                if (cityKey === 'Yushan') {
+                    return '高地氣候';
+                }
+                if (koppenCode.startsWith('A')) {
+                    return '熱帶季風氣候';
+                }
+                if (koppenCode.startsWith('C')) {
+                    return '副熱帶季風氣候';
+                }
             }
+            
+            // Default classification for all other locations
             const typeInfo = koppenColorData[koppenCode];
             return typeInfo ? typeInfo.hs_name : '未知類型';
         }
+
 
         // --- UI UPDATE FUNCTION ---
         function updateInfoPanel(cityKey) {
